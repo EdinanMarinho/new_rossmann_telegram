@@ -2,28 +2,12 @@ import os
 import requests
 import json
 import pandas as pd
-import time
 
 from flask import Flask, request, Response
 
 
 # Token do Bot no Telegram
 TOKEN = os.environ.get('TOKEN')
-
-## Info sobre o Bot
-#https://api.telegram.org/(TOKEN TELEGRAM))/getMe
-
-## get update
-#https://api.telegram.org/bot(TOKEN TELEGRAM)/getUpdates
-
-# Webhook localhost                                                                                                                       
-#https://api.telegram.org/bot(TOKEN TELEGRAM)/setWebhook?url=LOCALHOST
-
-# Webhook Render
-#https://api.telegram.org/bot(TOKEN TELEGRAM)/setWebhook?url=DEPLOY
-
-#Message
-#https://api.telegram.org/(TOKEN TELEGRAM)/sendMessage?chat_id=895518040&text=Olá Edinan, eu estou bem, obrigado!
 
 def send_message( chat_id, text ):
     url = f'https://api.telegram.org/bot{TOKEN}/'
@@ -60,29 +44,13 @@ def load_dataset( store_id ):
 
     return data
 
-# def predict(data):
-#     url = 'https://api-rossmann-edinan-marinho.onrender.com/rossmann/predict'
-#     header = {'Content-type': 'application/json'}
-#     retries = 3
-#     for i in range(retries):
-#         try:
-#             r = requests.post(url, data=data, headers=header)
-#             r.raise_for_status()
-#             print('Status Code {}'.format(r.status_code))
-#             d1 = pd.DataFrame(r.json(), columns=r.json()[0].keys())
-#             return d1
-#         except requests.exceptions.RequestException as e:
-#             print(f'Erro ao conectar, tentativa {i+1}/{retries}. Erro: {e}')
-#             time.sleep(2)  # Espera antes de tentar novamente
-#     return None
-
 def predict( data ):
     # API Call
     url = 'https://api-rossmann-edinan-marinho.onrender.com/rossmann/predict'
     header = {'Content-type': 'application/json' }
     data = data
 
-    r = requests.post( url, data=data, headers=header, timeout=30 )
+    r = requests.post( url, data=data, headers=header )
     print( 'Status Code {}'.format( r.status_code ) )
 
     d1 = pd.DataFrame( r.json(), columns=r.json()[0].keys() )
