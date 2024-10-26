@@ -20,18 +20,18 @@ def send_message( chat_id, text ):
 
 
 def load_dataset( store_id ):
-    # loading test dataset
+    # carrega o dataset de teste
     df10 = pd.read_csv( 'datasets/test.csv' )
     df_store_raw = pd.read_csv( 'datasets/store.csv' )
 
-    # merge test dataset + store
+    # mescla o dataset de teste com dataset de lojas
     df_test = pd.merge( df10, df_store_raw, how='left', on='Store' )
 
-    # choose store for prediction
+    # seleciona a loja para predicao
     df_test = df_test[df_test['Store'] == store_id]
 
     if not df_test.empty:
-        # remove closed days
+        # remove dias em que a loja está fechada
         df_test = df_test[df_test['Open'] != 0]
         df_test = df_test[~df_test['Open'].isnull()]
         df_test = df_test.drop( 'Id', axis=1 )
@@ -44,8 +44,19 @@ def load_dataset( store_id ):
 
     return data
 
+def wake_up_application():
+    # URL de "wake-up" da aplicação
+    wake_up_url = 'https://api-rossmann-edinan-marinho.onrender.com'
+    try:
+        requests.get(wake_up_url, timeout=5)
+    except requests.exceptions.RequestException:
+        pass  # Ignora erros para não interromper o fluxo principal
+
 def predict( data ):
-    # API Call
+    # faz o wake-up em uma nova thread
+    Thread(target=wake_up_application).start()
+
+    # chamada para o endpoint da previsao
     url = 'https://api-rossmann-edinan-marinho.onrender.com/rossmann/predict'
     header = {'Content-type': 'application/json' }
     data = data
