@@ -4,6 +4,7 @@ import json
 import pandas as pd
 
 from flask import Flask, request, Response
+from threading import Thread  # Importando a classe Thread
 
 
 # Token do Bot no Telegram
@@ -45,12 +46,8 @@ def load_dataset( store_id ):
     return data
 
 def wake_up_application():
-    # URL de "wake-up" da aplicação
-    wake_up_url = 'https://api-rossmann-edinan-marinho.onrender.com'
-    try:
-        requests.get(wake_up_url, timeout=5)
-    except requests.exceptions.RequestException:
-        pass  # Ignora erros para não interromper o fluxo principal
+    # Envia uma requisição para acordar a aplicação
+    requests.get('https://api-rossmann-edinan-marinho.onrender.com')
 
 def predict( data ):
     # faz o wake-up em uma nova thread
